@@ -9,9 +9,9 @@ import Logo from '../../components/logo/logo'
 const ListItem = List.Item;
 class Register extends Component{
     state = {
-        userName:'',
-        passWord:'',
-        passWord2:'',
+        username:'',
+        password:'',
+        password2:'',
         type:'laoban'
     }
 
@@ -32,11 +32,11 @@ class Register extends Component{
                 <WingBlank>
                     <List>
                         <WhiteSpace/>
-                        <InputItem placeholder='请输入用户名' onChange={(val)=>{this.handleChange('userName',val)}}>用户名:</InputItem>
+                        <InputItem placeholder='请输入用户名' onChange={(val)=>{this.handleChange('username',val)}}>用户名:</InputItem>
                         <WhiteSpace/>
-                        <InputItem placeholder='请输入密码' onChange={(val)=>{this.handleChange('passWord',val)}}>密&nbsp;&nbsp;&nbsp;码:</InputItem>
+                        <InputItem placeholder='请输入密码' onChange={(val)=>{this.handleChange('password',val)}}>密&nbsp;&nbsp;&nbsp;码:</InputItem>
                         <WhiteSpace/>
-                        <InputItem placeholder='请再次输入密码' onChange={(val)=>{this.handleChange('passWord2',val)}}>确认密码:</InputItem>
+                        <InputItem placeholder='请再次输入密码' onChange={(val)=>{this.handleChange('password2',val)}}>确认密码:</InputItem>
                         <WhiteSpace/>
                         <ListItem>
                             <span>用户类型:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

@@ -8,8 +8,8 @@ import Logo from '../../components/logo/logo'
 
  class Login extends Component{
      state = {
-         userName:'',
-         passWord:''
+         username:'',
+         password:''
      }
 
      handleChange=(name,value)=>{
@@ -28,9 +28,9 @@ import Logo from '../../components/logo/logo'
                 <WingBlank>
                     <List>
                         <WhiteSpace/>
-                        <InputItem placeholder='请输入用户名' onChange={(val)=>{this.handleChange('userName',val)}}>用户名:</InputItem>
+                        <InputItem placeholder='请输入用户名' onChange={(val)=>{this.handleChange('username',val)}}>用户名:</InputItem>
                         <WhiteSpace/>
-                        <InputItem placeholder='请输入密码' onChange={(val)=>{this.handleChange('passWord',val)}}>密&nbsp;&nbsp;&nbsp;码:</InputItem>
+                        <InputItem placeholder='请输入密码' onChange={(val)=>{this.handleChange('password',val)}}>密&nbsp;&nbsp;&nbsp;码:</InputItem>
                     </List>
                     <WhiteSpace/>
                     <Button type='primary'>登录</Button>
