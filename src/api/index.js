@@ -14,3 +14,6 @@ export const reqUser = () => ajax('/user')
 export const reqUserList = (type) => ajax('/userlist',{type})
 //获取聊天信息列表
 export const reqChat = () => ajax('/msglist')
+
+//获取已读消息数据
+export const reqReadMsg = (from) => ajax('/readmsg',{from},'POST')

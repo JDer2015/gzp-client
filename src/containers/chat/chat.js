@@ -3,20 +3,37 @@
  */
 
 import React, {Component} from 'react'
-import {NavBar, List, InputItem,Icon} from 'antd-mobile'
+import {NavBar, List, InputItem,Icon,Grid} from 'antd-mobile'
 import {connect}from 'react-redux'
 
-import {sendMsg} from '../../redux/actions'
+import {sendMsg,getReadMsg} from '../../redux/actions'
 
 const Item = List.Item
 
 class Chat extends Component {
     state = {
-        content:''
+        content:'',
+        isShow:false
+    }
+    componentWillMount () {// 第一次调用render渲染前调用, 调用一次
+        const emojis = ['😀', '😁', '🤣','😀', '😁', '🤣','😀', '😁', '🤣','😀', '😁', '🤣','😀'
+            ,'😁', '🤣','😀', '😁', '🤣','😀', '😁', '🤣','😀', '😁', '🤣'
+            ,'😁', '🤣','😀', '😁', '🤣','😀', '😁', '🤣','😀', '😁', '🤣'
+            ,'😁', '🤣','😀', '😁', '🤣','😀', '😁', '🤣','😀', '😁', '🤣']
+        this.emojis = emojis.map(value => ({text: value}))
+        // console.log(this.emojis)
     }
     componentDidMount() {
         // 初始显示列表
         window.scrollTo(0, document.body.scrollHeight)
+        const from = this.props.match.params.userid
+        const to = this.props.user._id
+        this.props.getReadMsg(from,to)
+    }
+    componentWillUnmount(){
+        const from = this.props.match.params.userid
+        const to = this.props.user._id
+        this.props.getReadMsg(from,to)
     }
 
     // 更新后, 自动滚动到底部
@@ -31,6 +48,16 @@ class Chat extends Component {
         this.props.sendMsg({from,to,content})
         this.setState({content:''})
     }
+    toggleShow = () => {
+        const isShow = !this.state.isShow
+        this.setState({isShow})
+        if(isShow) {
+            // 异步手动派发resize事件,解决表情列表显示的bug
+            setTimeout(() => {
+                window.dispatchEvent(new Event('resize'))
+            }, 0)
+        }
+    }
 
     render() {
         const userid = this.props.user._id
@@ -42,8 +69,6 @@ class Chat extends Component {
         if(chatMsgs.length === 0){
             return null
         }
-
-        console.log(users,chatMsgs)
 
         const currentMsgs = chatMsgs.filter(chat => chat.chat_id === chat_id)
         return (
@@ -80,12 +105,31 @@ class Chat extends Component {
                 <div className='am-tab-bar'>
                     <InputItem
                         onChange = {(val) => {this.setState({content:val})}}
+                        onFocus = {() => {this.setState({isShow:false})}}
                         placeholder="请输入"
                         value={this.state.content}
                         extra={
-                            <span onClick={this.sendMsg}>发送</span>
+                            <div>
+                                <span onClick={this.toggleShow}>😊</span>
+                                <span onClick={this.sendMsg} style={{marginLeft:10}}>发送</span>
+                            </div>
                         }
                     />
+                    {
+                        this.state.isShow ? (
+                            <Grid
+                                data={this.emojis}
+                                columnNum={8}
+                                carouselMaxRow={4}
+                                isCarousel={true}
+                                onClick={(item) => {
+                                    this.setState({
+                                        content: this.state.content + item.text
+                                    })
+                                }}
+                            />
+                        ) : null
+                    }
                 </div>
             </div>
         )
@@ -94,5 +138,5 @@ class Chat extends Component {
 
 export default connect(
     state => ({user:state.user,chat:state.chat}),
-    {sendMsg}
+    {sendMsg,getReadMsg}
 )(Chat)

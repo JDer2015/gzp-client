@@ -1,29 +1,32 @@
 import io from 'socket.io-client'
 
-import {AUTH_SUCCESS,ERR_MSG,RECEIVE_USER,RESET_USER,RECEIVE_USER_LIST,RECEIVE_CHAT_MSG,RECEIVE_CHAT} from './action-types'
-import {reqLogin,reqRegister,reqSave,reqUser,reqUserList,reqChat} from '../api/index'
+import {AUTH_SUCCESS,ERR_MSG,RECEIVE_USER,RESET_USER,RECEIVE_USER_LIST,RECEIVE_CHAT_MSG,RECEIVE_CHAT,READ_MSG} from './action-types'
+import {reqLogin,reqRegister,reqSave,reqUser,reqUserList,reqChat,reqReadMsg} from '../api/index'
 
 const authSuccess = (user) => ({type:AUTH_SUCCESS,data:user})
 export const err_msg = (msg) => ({type:ERR_MSG,data:msg})
 const receiveUser = (user) => ({type:RECEIVE_USER,data:user})
 const receiveUserList = (users) => ({type:RECEIVE_USER_LIST,data:users})
 export const resetUser = (msg) => ({type:RESET_USER,data:msg})
-const receiveChatMsg = (chatMsgs) => ({type:RECEIVE_CHAT_MSG,data:chatMsgs})
-const receiveChat = (chat) => ({type:RECEIVE_CHAT,data:chat})
-
+const receiveChatMsg = (chatMsgs,meId) => ({type:RECEIVE_CHAT_MSG,data:{chatMsgs,meId}})
+const receiveChat = ({users,chatMsgs,meId}) => ({type:RECEIVE_CHAT,data:{users,chatMsgs,meId}})
+const readMsg = ({from,to,count}) => ({type:READ_MSG,data:{from,to,count}})
 //连接服务器得到代表连接的对象
 const socket = io('ws://localhost:4000')
 //绑定监听获取浏览器发来的消息
 function initSocketIO(userid,dispatch) {
-    socket.on('receiveMsg',function (chatMsg) {
-        // console.log(chatMsg,userid)
-        if(chatMsg.from === userid || chatMsg.to === userid){
-            // console.log('接收到一条有用的消息~~~')
-            dispatch(receiveChatMsg(chatMsg))
-        }else{
-            console.log('接收到一条没用的消息~~~')
-        }
-    })
+    if(!io.socket){
+        io.socket = socket
+        socket.on('receiveMsg',function (chatMsg) {
+            // console.log(chatMsg,userid)
+            if(chatMsg.from === userid || chatMsg.to === userid){
+                // console.log('接收到一条有用的消息~~~')
+                dispatch(receiveChatMsg(chatMsg,userid))
+            }else{
+                console.log('接收到一条没用的消息~~~')
+            }
+        })
+    }
 }
 
 //获取当前用户的所有的效力列表
@@ -33,7 +36,7 @@ async function getChat(userid,dispatch) {
     const result = response.data
     if(result.code === 0){
         console.log('获取数据成功!!!')
-        dispatch(receiveChat(result.data))
+        dispatch(receiveChat({...result.data,meId:userid}))
     }
 }
 
@@ -125,6 +128,17 @@ export const getUserList = (type) => {
         if(result.code === 0){
             const data = result.data.filter(item => item.header)
             dispatch(receiveUserList(data))
+        }
+    }
+}
+
+export const getReadMsg = (from,to) => {
+    return async dispatch => {
+        const response = await reqReadMsg(from)
+        const result = response.data
+        if(result.code === 0){
+            const count = result.data
+            dispatch(readMsg({from,to,count}))
         }
     }
 }
