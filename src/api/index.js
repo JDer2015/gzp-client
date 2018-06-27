@@ -8,3 +8,9 @@ export const reqRegister = ({username,password,type}) => ajax('/register',{usern
 
 //发送保存请求
 export const reqSave = (user) => ajax('/update',user,'POST')
+//自动登录
+export const reqUser = () => ajax('/user')
+//获取用户列表
+export const reqUserList = (type) => ajax('/userlist',{type})
+//获取聊天信息列表
+export const reqChat = () => ajax('/msglist')

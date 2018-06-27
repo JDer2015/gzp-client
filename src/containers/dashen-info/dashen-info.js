@@ -6,7 +6,7 @@ import {NavBar,InputItem,Button,TextareaItem} from 'antd-mobile'
 import HeaderSelect from '../../components/headerselect/headselect'
 import {updateUser} from '../../redux/actions'
 
-class LaoBanInfo extends Component{
+class DaShenInfo extends Component{
     state = {
         header: '',
         post: '',
@@ -42,4 +42,4 @@ class LaoBanInfo extends Component{
 export default connect(
     state => ({user:state.user}),
     {updateUser}
-)(LaoBanInfo)
+)(DaShenInfo)
